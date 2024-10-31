@@ -52,6 +52,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
+  var extendedByWidth = true;
 
   @override
   Widget build(BuildContext context) {
@@ -61,18 +62,24 @@ class _MyHomePageState extends State<MyHomePage> {
         page = GeneratorPage();
         break;
       case 1:
-        page = Placeholder();
+        page = FavoritesPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
+
     return LayoutBuilder(builder: (context, constraints) {
+      // TODO: extended by button
+      // extended by width and button. the button fix at the first position and switch the extended state
+      var extended = false;
+      extended = extendedByWidth && constraints.maxWidth >= 600;
+
       return Scaffold(
         body: Row(
           children: [
             SafeArea(
                 child: NavigationRail(
-              extended: constraints.maxWidth >= 600,
+              extended: extended,
               destinations: [
                 NavigationRailDestination(
                     icon: Icon(Icons.home), label: Text('Home')),
@@ -170,6 +177,33 @@ class BigCard extends StatelessWidget {
           semanticsLabel: "${pair.first} ${pair.second}",
         ),
       ),
+    );
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var favorites = appState.favorites;
+    if (favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet'),
+      );
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('you have ${favorites.length} favorites'),
+        ),
+        for (var pair in favorites)
+          ListTile(
+            title: Text(pair.asLowerCase),
+            leading: Icon(Icons.favorite),
+          ),
+      ],
     );
   }
 }
