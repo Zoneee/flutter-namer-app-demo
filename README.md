@@ -1,6 +1,7 @@
 # namer_app
 
 A new Flutter project.
+Generate random names.
 
 ## Getting Started
 
